@@ -3,8 +3,8 @@ let (/) = Filename.concat
 let define = function
   | Some thing -> thing
   | None ->
-    try Sys.getenv "IDAUSR" / "plugins"
-    with Not_found -> try Sys.getenv "HOME" / ".idapro" / "plugins"
+    try Sys.getenv "IDAPLG"
+    with Not_found -> try Sys.getenv "IDADIR" / "plugins"
       with Not_found -> failwith "Please specify path for IDA plugins"
 
 let () =
