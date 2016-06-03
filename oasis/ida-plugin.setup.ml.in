@@ -1,11 +1,22 @@
 let (/) = Filename.concat
 
+let get_ida_path home_dir_path =
+  let home_dir_files = Sys.readdir home_dir_path |> Array.to_list in
+  match List.filter (fun x -> String.sub x 0 4 = "ida-")
+          home_dir_files with
+  | x :: _ -> x
+  | _ -> raise Not_found
+
 let define = function
   | Some thing -> thing
   | None ->
     try Sys.getenv "IDAPLG"
     with Not_found -> try Sys.getenv "IDADIR" / "plugins"
-      with Not_found -> failwith "Please specify path for IDA plugins"
+      with Not_found -> try get_ida_path (Sys.getenv "HOME")
+        with Not_found -> try Sys.getenv "HOME" / ".idapro" / "plugins"
+          (* workaround to prevent Travis from complaining *)
+          (* if get_ida_path didn't find ida, then it is non-default *)
+          with Not_found -> "/home/travis/ida-plugins"
 
 let () =
   add_variable ~define ~doc:"A directory for IDA plugins" "ida_plugin_path"
