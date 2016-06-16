@@ -118,7 +118,7 @@ module Create() = struct
         | None -> value in
       ref value
 
-    let create converter ~default ?(docv="VAL") ~doc ~name : 'a param =
+    let param converter ~default ?(docv="VAL") ~doc ~name : 'a param =
       let param = get_param ~converter ~default ~name in
       let t =
         Arg.(value @@ opt converter !param @@ info [name] ~doc ~docv) in

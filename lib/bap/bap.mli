@@ -582,7 +582,7 @@ module Std : sig
 
         Example usage:
 
-        let path = Config.(create string ~doc:"a path to file"
+        let path = Config.(param string ~doc:"a path to file"
         ~default:"input.txt" ~name:"path")
         let debug = Config.(flag ...)
 
@@ -689,7 +689,7 @@ module Std : sig
       val t4 : ?sep:char -> 'a converter -> 'b converter -> 'c converter ->
         'd converter -> ('a * 'b * 'c * 'd) converter
 
-      val create :
+      val param :
         'a converter -> default:'a ->
         ?docv:string -> doc:string -> name:string -> 'a param
 
