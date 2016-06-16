@@ -18,7 +18,7 @@ module Create() : sig
     val libdir : string
     val confdir : string
 
-    type 'a t
+    type 'a param
 
     type 'a parser = string -> [ `Ok of 'a | `Error of string ]
     type 'a printer = Format.formatter -> 'a -> unit
@@ -47,12 +47,13 @@ module Create() : sig
 
     val create :
       'a converter -> default:'a ->
-      ?docv:string -> doc:string -> name:string -> 'a t
+      ?docv:string -> doc:string -> name:string -> 'a param
 
     val flag :
-      ?docv:string -> doc:string -> name:string -> bool t
+      ?docv:string -> doc:string -> name:string -> bool param
 
-    val extract : unit -> 'a t -> 'a
+    type 'a reader = 'a param -> 'a
+    val extract : unit -> 'a reader
 
     type manpage_block = [
       | `I of string * string

@@ -65,7 +65,7 @@ module Create() = struct
     let plugin_name = name
     include Bap_config
 
-    type 'a t = 'a ref
+    type 'a param = 'a ref
     type 'a parser = string -> [ `Ok of 'a | `Error of string ]
     type 'a printer = Format.formatter -> 'a -> unit
     type 'a converter = 'a parser * 'a printer
@@ -118,14 +118,14 @@ module Create() = struct
         | None -> value in
       ref value
 
-    let create converter ~default ?(docv="VAL") ~doc ~name : 'a t =
+    let create converter ~default ?(docv="VAL") ~doc ~name : 'a param =
       let param = get_param ~converter ~default ~name in
       let t =
         Arg.(value @@ opt converter !param @@ info [name] ~doc ~docv) in
       main := Term.(const (fun x () -> param := x) $ t $ (!main));
       param
 
-    let flag ?docv ~doc ~name : bool t = assert false
+    let flag ?docv ~doc ~name : bool param = assert false
     (* TODO Implement this *)
 
     let term_info = ref (Term.info ~doc plugin_name)
@@ -141,7 +141,8 @@ module Create() = struct
     let manpage (man:manpage_block) : unit =
       term_info := Term.info ~doc ~man plugin_name
 
-    let extract () : 'a t -> 'a =
+    type 'a reader = 'a param -> 'a
+    let extract () : 'a reader =
       match Term.eval (!main, !term_info) with
       | `Error _ -> exit 1
       | `Ok _ -> (fun p -> !p)
