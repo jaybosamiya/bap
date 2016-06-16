@@ -610,32 +610,57 @@ module Std : sig
       (** A directory for bap specific configuration files  *)
       val confdir : string
 
+      (** An abstract parameter type that can be later read using a reader *)
       type 'a param
 
+      (** Parse a string to an 'a *)
       type 'a parser = string -> [ `Ok of 'a | `Error of string ]
+
+      (** Converts an 'a to a string *)
       type 'a printer = Format.formatter -> 'a -> unit
+
+      (** Interconversion between string and 'a type *)
       type 'a converter = 'a parser * 'a printer
 
+      (** Create a parameter *)
       val param :
         'a converter -> default:'a ->
         ?docv:string -> doc:string -> name:string -> 'a param
 
+      (** Create a boolean parameter that is set to true if user
+          mentions it in the command line arguments *)
       val flag :
         ?docv:string -> doc:string -> name:string -> bool param
 
+      (** Reads a value from a parameter *)
       type 'a reader = 'a param -> 'a
+
+      (** Parse command line arguments and return a param reader *)
       val parse : unit -> 'a reader
 
-      (* TODO Write some documentation here *)
+      (** The type for a block of man page text.
+
+          - [`S s] introduces a new section [s].
+          - [`P t] is a new paragraph with text [t].
+          - [`Pre t] is a new preformatted paragraph with text [t].
+          - [`I (l,t)] is an indented paragraph with label [l] and text [t].
+          - [`Noblank] suppresses the blank line introduced between two blocks.
+
+          Except in [`Pre], whitespace and newlines are not significant
+          and are all collapsed to a single space. In labels [l] and text
+          strings [t], the syntax ["$(i,italic text)"] and ["$(b,bold
+          text)"] can be used to respectively produce italic and bold
+          text. *)
       type manpage_block = [
         | `I of string * string
         | `Noblank
         | `P of string
         | `Pre of string
         | `S of string
-      ] list
+      ]
 
-      val manpage : manpage_block -> unit
+      (** Create a manpage for the plugin *)
+      val manpage : manpage_block list -> unit
 
       (** [bool] converts values with {!bool_of_string}. *)
       val bool : bool converter

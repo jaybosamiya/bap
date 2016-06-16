@@ -40,9 +40,9 @@ module Create() : sig
       | `P of string
       | `Pre of string
       | `S of string
-    ] list
+    ]
 
-    val manpage : manpage_block -> unit
+    val manpage : manpage_block list -> unit
 
     val bool : bool converter
     val char : char converter

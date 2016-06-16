@@ -141,9 +141,9 @@ module Create() = struct
       | `P of string
       | `Pre of string
       | `S of string
-    ] list
+    ]
 
-    let manpage (man:manpage_block) : unit =
+    let manpage (man:manpage_block list) : unit =
       term_info := Term.info ~doc ~man plugin_name
 
     type 'a reader = 'a param -> 'a
