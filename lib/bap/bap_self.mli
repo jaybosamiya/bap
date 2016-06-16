@@ -12,7 +12,12 @@ module Create() : sig
   val warning : ('a,formatter,unit) format -> 'a
   val error   : ('a,formatter,unit) format -> 'a
 
-  module Param : sig
+  module Config : sig
+    val version : string
+    val datadir : string
+    val libdir : string
+    val confdir : string
+
     type 'a t
 
     type 'a parser = string -> [ `Ok of 'a | `Error of string ]

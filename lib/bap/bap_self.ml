@@ -61,8 +61,9 @@ module Create() = struct
   let warning f = message Warning ~section:name f
   let error f = message Error ~section:name f
 
-  module Param = struct
+  module Config = struct
     let plugin_name = name
+    include Bap_config
 
     type 'a t = 'a ref
     type 'a parser = string -> [ `Ok of 'a | `Error of string ]

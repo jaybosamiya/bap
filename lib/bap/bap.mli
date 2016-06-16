@@ -530,25 +530,6 @@ module Std : sig
 
   (** {1:api BAP API}  *)
 
-  (** Access to BAP configuration variables  *)
-  module Config : sig
-    (** Version number  *)
-    val version : string
-
-    (** A directory for bap specific read-only architecture
-        independent data files.  *)
-    val datadir : string
-
-    (** A directory for bap specific object files, libraries, and
-        internal binaries that are not intended to be executed directly
-        by users or shell scripts *)
-    val libdir : string
-
-    (** A directory for bap specific configuaration files  *)
-    val confdir : string
-  end
-
-
   (** This module refers to an information bundled with an application.
       Use [include Self()] syntax to bring this definitions to the
       scope.
@@ -590,9 +571,10 @@ module Std : sig
     val warning : ('a,Format.formatter,unit) format -> 'a
     val error   : ('a,Format.formatter,unit) format -> 'a
 
-    (** This module allows plugins to accept configuration values.
+    (** This module allows plugins to access BAP configuration variables.
 
-        The decreasing order of precedence for the values is:
+        When reading the values for the configuration variables, the
+        decreasing order of precedence for the values is:
         - Command line arguments
         - Environment variables
         - Configuration file
@@ -600,17 +582,33 @@ module Std : sig
 
         Example usage:
 
-        let path = Param.(create string ~doc:"a path to file"
+        let path = Config.(create string ~doc:"a path to file"
         ~default:"input.txt" ~name:"path")
-        let debug = Param.(flag ...)
+        let debug = Config.(flag ...)
 
         ...
 
         let main () =
-          let (!) = Param.extract () in
+          let (!) = Config.extract () in
           do_stuff !path !debug ...
     *)
-    module Param : sig
+    module Config : sig
+      (** Version number  *)
+      val version : string
+
+      (** A directory for bap specific read-only architecture
+          independent data files.  *)
+      val datadir : string
+
+      (** A directory for bap specific object files, libraries, and
+          internal binaries that are not intended to be executed directly
+          by users or shell scripts *)
+      val libdir : string
+
+      (** A directory for bap specific configuration files  *)
+      val confdir : string
+
+
       type 'a t
 
       type 'a parser = string -> [ `Ok of 'a | `Error of string ]
