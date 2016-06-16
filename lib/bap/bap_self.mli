@@ -32,7 +32,7 @@ module Create() : sig
       ?docv:string -> doc:string -> name:string -> bool param
 
     type 'a reader = 'a param -> 'a
-    val extract : unit -> 'a reader
+    val parse : unit -> 'a reader
 
     type manpage_block = [
       | `I of string * string

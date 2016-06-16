@@ -589,7 +589,7 @@ module Std : sig
         ...
 
         let main () =
-          let (!) = Config.extract () in
+          let (!) = Config.parse () in
           do_stuff !path !debug ...
     *)
     module Config : sig
@@ -622,7 +622,7 @@ module Std : sig
         ?docv:string -> doc:string -> name:string -> bool param
 
       type 'a reader = 'a param -> 'a
-      val extract : unit -> 'a reader
+      val parse : unit -> 'a reader
 
       (* TODO Write some documentation here *)
       type manpage_block = [

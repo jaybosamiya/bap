@@ -142,7 +142,7 @@ module Create() = struct
       term_info := Term.info ~doc ~man plugin_name
 
     type 'a reader = 'a param -> 'a
-    let extract () : 'a reader =
+    let parse () : 'a reader =
       match Term.eval (!main, !term_info) with
       | `Error _ -> exit 1
       | `Ok _ -> (fun p -> !p)
