@@ -65,6 +65,11 @@ module Create() = struct
     let plugin_name = name
     include Bap_config
 
+    (* Discourage access to directories of other plugins *)
+    let confdir =
+      let (/) = Filename.concat in
+      confdir / plugin_name
+
     type 'a param = 'a ref
     type 'a parser = string -> [ `Ok of 'a | `Error of string ]
     type 'a printer = Format.formatter -> 'a -> unit
@@ -75,7 +80,7 @@ module Create() = struct
     let conf_file_options : (string, string) List.Assoc.t =
       let conf_filename =
         let (/) = Filename.concat in
-        Bap_config.confdir / plugin_name / "config" in
+        Bap_config.confdir / "config" in
       let string_splitter str =
         let str = String.strip str in
         match String.split str ~on:'=' with
