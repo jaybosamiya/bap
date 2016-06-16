@@ -24,6 +24,26 @@ module Create() : sig
     type 'a printer = Format.formatter -> 'a -> unit
     type 'a converter = 'a parser * 'a printer
 
+    val param :
+      'a converter -> default:'a ->
+      ?docv:string -> doc:string -> name:string -> 'a param
+
+    val flag :
+      ?docv:string -> doc:string -> name:string -> bool param
+
+    type 'a reader = 'a param -> 'a
+    val extract : unit -> 'a reader
+
+    type manpage_block = [
+      | `I of string * string
+      | `Noblank
+      | `P of string
+      | `Pre of string
+      | `S of string
+    ] list
+
+    val manpage : manpage_block -> unit
+
     val bool : bool converter
     val char : char converter
     val int : int converter
@@ -44,26 +64,6 @@ module Create() : sig
       ('a * 'b * 'c) converter
     val t4 : ?sep:char -> 'a converter -> 'b converter -> 'c converter ->
       'd converter -> ('a * 'b * 'c * 'd) converter
-
-    val param :
-      'a converter -> default:'a ->
-      ?docv:string -> doc:string -> name:string -> 'a param
-
-    val flag :
-      ?docv:string -> doc:string -> name:string -> bool param
-
-    type 'a reader = 'a param -> 'a
-    val extract : unit -> 'a reader
-
-    type manpage_block = [
-      | `I of string * string
-      | `Noblank
-      | `P of string
-      | `Pre of string
-      | `S of string
-    ] list
-
-    val manpage : manpage_block -> unit
 
   end
 

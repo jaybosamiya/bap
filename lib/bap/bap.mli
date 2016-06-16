@@ -614,6 +614,27 @@ module Std : sig
       type 'a printer = Format.formatter -> 'a -> unit
       type 'a converter = 'a parser * 'a printer
 
+      val param :
+        'a converter -> default:'a ->
+        ?docv:string -> doc:string -> name:string -> 'a param
+
+      val flag :
+        ?docv:string -> doc:string -> name:string -> bool param
+
+      type 'a reader = 'a param -> 'a
+      val extract : unit -> 'a reader
+
+      (* TODO Write some documentation here *)
+      type manpage_block = [
+        | `I of string * string
+        | `Noblank
+        | `P of string
+        | `Pre of string
+        | `S of string
+      ] list
+
+      val manpage : manpage_block -> unit
+
       (** [bool] converts values with {!bool_of_string}. *)
       val bool : bool converter
 
@@ -688,27 +709,6 @@ module Std : sig
           with [c0], [c1], [c2] and [c3]. *)
       val t4 : ?sep:char -> 'a converter -> 'b converter -> 'c converter ->
         'd converter -> ('a * 'b * 'c * 'd) converter
-
-      val param :
-        'a converter -> default:'a ->
-        ?docv:string -> doc:string -> name:string -> 'a param
-
-      val flag :
-        ?docv:string -> doc:string -> name:string -> bool param
-
-      type 'a reader = 'a param -> 'a
-      val extract : unit -> 'a reader
-
-      (* TODO Write some documentation here *)
-      type manpage_block = [
-        | `I of string * string
-        | `Noblank
-        | `P of string
-        | `Pre of string
-        | `S of string
-      ] list
-
-      val manpage : manpage_block -> unit
 
     end
 
