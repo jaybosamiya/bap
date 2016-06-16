@@ -582,15 +582,17 @@ module Std : sig
 
         Example usage:
 
-        let path = Config.(param string ~doc:"a path to file"
-        ~default:"input.txt" ~name:"path")
-        let debug = Config.(flag ...)
+        {[
+          let path = Config.(param string ~doc:"a path to file"
+                               ~default:"input.txt" ~name:"path")
+          let debug = Config.(flag (* ... *) )
 
-        ...
+          (* ... *)
 
-        let main () =
-          let (!) = Config.parse () in
-          do_stuff !path !debug ...
+          let main () =
+            let (!) = Config.parse () in
+            do_stuff !path !debug (* ... *)
+        ]}
     *)
     module Config : sig
       (** Version number  *)
