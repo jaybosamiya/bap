@@ -15,7 +15,14 @@ let of_truth truth ~testbin : addr seq Or_error.t =
   | `unstripped_bin -> Ground_truth.from_unstripped_bin truth
   | `symbol_file -> Ground_truth.from_symbol_file truth ~testbin
 
+type tool = BW | Ida of string*bool
+let tool_name tool = match tool with
+  | BW -> "bap-byteweight"
+  | Ida _ -> "ida" (* TODO Check this again *)
+
 let of_tool tool ~testbin : addr seq Or_error.t =
-  if tool = "bap-byteweight"
-  then Find_starts.with_byteweight testbin
-  else Find_starts.with_ida testbin
+  match tool with
+  | BW ->
+    Find_starts.with_byteweight testbin
+  | Ida (ida_path, is_headless) ->
+    Find_starts.with_ida ~ida_path ~is_headless testbin

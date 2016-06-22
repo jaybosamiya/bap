@@ -85,8 +85,12 @@ let print formatter tool result print_metrics : unit =
   output_metric_value formatter result print_metrics
 
 let compare_against bin tool_name truth_name print_metrics : unit =
+  let tool = if tool_name = "bap-byteweight"
+    then Func_start.BW
+    else Func_start.Ida ("",false) in (* TODO Get IDA path and
+                                         headless info from user instead *)
   let open Or_error in
-  (Func_start.of_tool tool_name ~testbin:bin >>| fun tool ->
+  (Func_start.of_tool tool ~testbin:bin >>| fun tool ->
    Func_start.of_truth truth_name ~testbin:bin >>| fun truth ->
    let result =
      let to_set seq = Seq.fold seq ~init:Addr.Set.empty
