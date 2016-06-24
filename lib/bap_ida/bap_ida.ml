@@ -3,12 +3,12 @@ open Core_kernel.Std
 module Command = struct
   type 'a t = {
     script  : string;
-    process : string -> 'a;
+    parser : string -> 'a;
     language : [`python | `idc ]
   } [@@deriving fields]
 
   type language = [`python | `idc]
-  let create = Fields.create
+  let create language = Fields.create ~language
 end
 
 type 'a command = 'a Command.t
