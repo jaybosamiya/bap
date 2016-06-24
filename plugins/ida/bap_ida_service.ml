@@ -100,36 +100,21 @@ let substitute s (x,y) =
   Buffer.add_substitute b (fun s -> if s = x then y else s) s;
   Buffer.contents b
 
-module type Ida = sig
-  val self : ida
-end
+let exec (self:ida) command =
+  let ext = if Command.language command = `idc then ".idc" else ".py" in
+  let script,out = Filename.open_temp_file "bap_" ext in
+  let result = Filename.temp_file "bap_" ".ida_out" in
+  substitute (Command.script command) ("output", result) |>
+  Out_channel.output_string out;
+  Out_channel.close out;
+  self.trash <- script :: result :: self.trash;
+  let auto = if self.debug > 1 then "" else "-A" in
+  run self @@ shell "%s %s -S%s %s" self.ida auto script self.exe;
+  (Command.parser command) result
 
-module IDA_Service (M : Ida) = struct
-
-  let self = M.self
-
-  type t = {
-    exec : 'a. 'a command -> 'a;
-    close : unit -> unit
-  }
-
-  let exec command =
-    let ext = if Command.language command = `idc then ".idc" else ".py" in
-    let script,out = Filename.open_temp_file "bap_" ext in
-    let result = Filename.temp_file "bap_" ".ida_out" in
-    substitute (Command.script command) ("output", result) |>
-    Out_channel.output_string out;
-    Out_channel.close out;
-    self.trash <- script :: result :: self.trash;
-    let auto = if self.debug > 1 then "" else "-A" in
-    run self @@ shell "%s %s -S%s %s" self.ida auto script self.exe;
-    (Command.parser command) result
-
-  let close =
-    if self.debug < 2 then
-      FileUtil.rm self.trash
-
-end
+let close (self:ida) =
+  if self.debug < 2 then
+    FileUtil.rm self.trash
 
 let require req check =
   if check
@@ -183,9 +168,8 @@ let register ida_path is_headless : unit =
     debug
   } in
   let create (target:string) : Service.t =
-    let module IDA = struct let self = create config target end in
-    let module Service = IDA_Service (IDA) in
-    let exec = Service.exec in
-    let close () = Service.close in
+    let self = create config target in
+    let exec cmd = exec self cmd in
+    let close () = close self in
     { exec; close } in
   Service.provide create
