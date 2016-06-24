@@ -41,7 +41,7 @@ module Std : sig
 
   end
 
-
+  (** Commands that can be passed into an IDA session *)
   module Command : sig
     type 'a t = 'a command
 
@@ -56,12 +56,15 @@ module Std : sig
     val parser : 'a t -> (string -> 'a)
   end
 
-
+  (** Allow plugins to specify that they can provide IDA service *)
   module Service : sig
     type t = {
       exec  : 'a. 'a command -> 'a;
       close : unit -> unit;
     }
+
+    (** [provide creator] provides for a service that can perform the
+        roles of [Ida.create], [Ida.exec], [Ida.close] *)
     val provide : (string -> t) -> unit
   end
 end
