@@ -29,7 +29,7 @@ let get_symbols =
 from bap.utils.ida import dump_symbol_info
 dump_symbol_info('$output')
 idc.Exit(0)"
-    ~process:(fun name ->
+    ~parser:(fun name ->
         let blk_of_sexp x = [%of_sexp:string*int64*int64] x in
         In_channel.with_file name ~f:(fun ch ->
             Sexp.input_sexps ch |> List.map ~f:blk_of_sexp))
@@ -103,7 +103,7 @@ let read_image name =
 
 let load_image = Command.create `python
     ~script:loader_script
-    ~process:read_image
+    ~parser:read_image
 
 
 let mapfile path : Bigstring.t =
