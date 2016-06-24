@@ -47,8 +47,7 @@ module Std : sig
 
     type language = [`python | `idc]
 
-    (* TODO: Either document this, or rename [process] to [parse] *)
-    val create : language -> script:string -> process:(string -> 'a) -> 'a t
+    val create : language -> script:string -> parser:(string -> 'a) -> 'a t
 
     val language : 'a t -> language
 

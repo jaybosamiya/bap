@@ -1,21 +1,17 @@
 open Core_kernel.Std
 
-type ida
-
-type 'a command = {
-  script  : string;
-  process : string -> 'a;
-  language : [`python | `idc ]
-}
-
 module Command = struct
-  type 'a t = 'a command
+  type 'a t = {
+    script  : string;
+    process : string -> 'a;
+    language : [`python | `idc ]
+  } [@@deriving fields]
+
   type language = [`python | `idc]
-  let create language ~script ~process = {script; process; language}
-  let language x = x.language
-  let script x = x.script
-  let parser x = x.process
+  let create = Fields.create
 end
+
+type 'a command = 'a Command.t
 
 module Service = struct
   type t = {
